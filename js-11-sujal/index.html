@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Book</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#recipeForm {
+    margin-top: 20px;
+}
+
+#recipeForm input, #recipeForm textarea {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+#recipeList li {
+    margin-bottom: 10px;
+}
+
+</style>
+<body>
+    <div class="container">
+        <h1>Recipe Book</h1>
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button onclick="search()">Search</button>
+        <ul id="recipeList"></ul>
+        <button onclick="showForm()">Add New Recipe</button>
+        <div id="recipeForm" style="display:none;">
+            <input type="text" id="recipeName" placeholder="Recipe Name">
+            <textarea id="recipeInstructions" placeholder="Instructions"></textarea>
+            <button onclick="addRecipe()">Add Recipe</button>
+        </div>
+    </div>
+    <script >
+        let recipes = [];
+
+function renderRecipes() {
+    let recipeList = document.getElementById('recipeList');
+    recipeList.innerHTML = '';
+    recipes.forEach((recipe, index) => {
+        let li = document.createElement('li');
+        li.innerHTML = `<strong>${recipe.name}</strong>: ${recipe.instructions} 
+        <button onclick="editRecipe(${index})">Edit</button>
+         <button onclick="deleteRecipe(${index})">Delete</button>`;
+        recipeList.appendChild(li);
+    });
+    localStorage.setItem("addrecipe", JSON.stringify(recipes));
+}
+
+function addRecipe() {
+    let recipeName = document.getElementById('recipeName').value;
+    let recipeInstructions = document.getElementById('recipeInstructions').value;
+    recipes.push({ name: recipeName, instructions: recipeInstructions });
+    renderRecipes();
+    clearForm();
+    localStorage.setItem("addrecipe", JSON.stringify(recipes));
+}
+
+function editRecipe(index) {
+    let newName = prompt('Enter new name:');
+    let newInstructions = prompt('Enter new instructions:');
+    if (newName && newInstructions) {
+        recipes[index].name = newName;
+        recipes[index].instructions = newInstructions;
+        renderRecipes();
+    }
+    localStorage.setItem("addrecipe", JSON.stringify(newName));
+    localStorage.setItem("addrecipe", JSON.stringify(newInstructions));
+}
+
+function deleteRecipe(index) {
+    recipes.splice(index, 1);
+   
+            localStorage.setItem("addrecipe", JSON.stringify(recipes));
+    renderRecipes();
+}
+
+function clearForm() {
+    document.getElementById('recipeName').value = '';
+    document.getElementById('recipeInstructions').value = '';
+}
+
+function showForm() {
+    document.getElementById('recipeForm').style.display = 'block';
+}
+
+function search() {
+    let searchTerm = document.getElementById('searchInput').value;
+    let filteredRecipes = recipes.filter(recipe => recipe.name || recipe.instructions);
+   let recipeList = document.getElementById('recipeList');
+    recipeList.innerHTML = '';
+    filteredRecipes.forEach((recipe, index) => {
+         li = document.createElement('li');
+        li.innerHTML = `<strong>${recipe.name}</strong>: ${recipe.instructions} <button onclick="editRecipe(${index})">Edit</button> <button onclick="deleteRecipe(${index})">Delete</button>`;
+        recipeList.appendChild(li);
+    });
+}
+
+recipes.push({ name: 'Pasta Carbonara', instructions: '1. Cook pasta. 2. Mix eggs, cheese, and cooked bacon. 3. Combine with pasta.' });
+recipes.push({ name: 'Chocolate Cake', instructions: '1. Preheat oven. 2. Mix ingredients. 3. Bake for 30 minutes.' });
+
+renderRecipes(); 
+
+    </script>
+</body>
+</html>
